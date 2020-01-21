@@ -103,6 +103,7 @@ class QueueManager:
                                 val = int(val)
                         exp.config.data[line[ind+4:-1]] = val
             rqueue.append(exp)
+        self.experiment_queue.queue.clear()
         self.experiment_queue.queue.extend(rqueue)
         return True
 
