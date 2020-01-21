@@ -19,10 +19,6 @@ class QueuePage(Page):
         :param parent: The wxframe that the Queue Page will be shown on
         """
         Page.__init__(self, parent)
-
-        # Sets up the sub-panels
-        self.queue_panel = QueuePanel(self)
-        self.control_panel = ExperimentControlPanel(self)
-        Page.add_panels(self, self.queue_panel, self.control_panel,
+        Page.add_panels(self, QueuePanel(self), ExperimentControlPanel(self),
                         display_propotion=CONSTANTS.QUEUE_PANEL_PROPORTION,
                         control_proportion=CONSTANTS.QUEUE_CONTROL_PANEL_PROPORTION)

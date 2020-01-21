@@ -86,10 +86,9 @@ class QueuePanel(DisplayPanel):
         """
         Reloads the display list with the current Queue contents
         """
-        if self.list_box.GetCount() != len(Globals.systemConfigManager.get_queue_manager().get_experiment_names()):
-            self.list_box.Clear()
-            for experiment in Globals.systemConfigManager.get_queue_manager().get_experiment_names():
-                self.list_box.Append(experiment)
+        self.list_box.Clear()
+        for experiment in Globals.systemConfigManager.get_queue_manager().get_experiment_names():
+            self.list_box.Append(experiment)
 
     def deselected(self, event):
         """
