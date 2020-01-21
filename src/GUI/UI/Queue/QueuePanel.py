@@ -150,6 +150,7 @@ class QueuePanel(DisplayPanel):
         """
         nm = self.load_exp.GetString(self.load_exp.GetSelection()).replace(" ", "_")
         mgr = Globals.systemConfigManager.get_queue_manager()
+        mgr.clear_queue()
         mgr.read_queue_from_file(os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + nm), CONFIGS)
 
     @staticmethod
