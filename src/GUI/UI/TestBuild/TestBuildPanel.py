@@ -1,6 +1,5 @@
 import wx
 import json
-import imp
 import inspect
 import os
 
@@ -131,17 +130,18 @@ class TestBuildPanel(DisplayPanel):
         hwm = Globals.systemConfigManager.get_hardware_manager()
         for dev in hwm.get_all_hardware_names():
             drv = hwm.get_hardware_object(dev).driver
-            drvcls = imp.load_source("drvcls", os.path.join(CONSTANTS.DRIVERS_DIR, drv + ".py"))
-            classes = inspect.getmembers(drvcls, inspect.isclass)
-            funcs = []
-            for c in classes:
-                if str(c[0]) == drv:
-                    funcs = [m for m in inspect.getmembers(c[1], inspect.ismethod) if m[0][0] != "_"]
-            self.device_functions[dev] = funcs
-            for func in funcs:
+
+            # from src.Instruments.DeviceClass import DeviceClass
+            mod = __import__("src.Instruments." + drv, fromlist=[drv])
+            klass = getattr(mod, drv)
+
+            methods_of_class = [m for m in inspect.getmembers(klass, inspect.isfunction) if m[0][0] != "_"]
+            self.device_functions[dev] = methods_of_class
+            for func in methods_of_class:
                 if func[0] not in [f[0] for f in self.fcs]:
-                    self.fcs.append((func[0], len(inspect.getargspec(func[1])[0]) - 1, func[0]))
-                    self.fc_args[func[0]] = inspect.getargspec(func[1])[0][1:]
+                    self.fcs.append((func[0], len(inspect.getfullargspec(func[1])[0]) - 1, func[0]))
+                    self.fc_args[func[0]] = inspect.getfullargspec(func[1])[0][1:]
+
         # This sort exists so that the test parser will match longer functions before shorter ones and not break
         self.fcs.sort(key=lambda fn: fn[0], reverse=True)
 
