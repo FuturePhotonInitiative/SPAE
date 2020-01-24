@@ -1,19 +1,17 @@
 import os
-import datetime
 from shutil import copyfile
 from threading import Thread
-import copy
 import contextlib2
 
 from src.GUI import RunAConfigFileMain
 from src.GUI.Util import Globals
 from src.GUI.Util.Functions import clean_name_for_file
+from src.GUI.Util.Timestamp import Timestamp
 from src.GUI.RunAConfigFile.DeviceSetup import DeviceSetup
 
 from src.GUI.Model.ExperimentModel import Experiment
 from src.GUI.Model.ExperimentScriptModel import ExperimentScript
 
-from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
 from src.GUI.Util.CONSTANTS import TEMP_DIR
 from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
 from src.GUI.Util.CONSTANTS import PROJ_DIR
@@ -128,9 +126,8 @@ class QueueRunner(Thread):
                 """
         # Create the main results directory for this test series
         self.queue.schedule_experiments()
-        now = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
-        name = "Tcl_Experiment" + str(now)
-        name = clean_name_for_file(name)
+        now = Timestamp()
+        name = "Tcl_Experiment" + now.for_filename()
         self.queue_result.time = now
         result_dir = Globals.systemConfigManager.get_results_manager().results_directory
         master_tcl = ""

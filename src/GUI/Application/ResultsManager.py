@@ -1,4 +1,3 @@
-import datetime
 import os
 
 from src.GUI.Model import QueueResultModel
@@ -6,7 +5,7 @@ from src.GUI.Model.ExperimentModel import Experiment
 from src.GUI.Model.ExperimentResultModel import ExperimentResultsModel
 from src.GUI.Util.Functions import clean_name_for_file
 from src.GUI.Util.CONSTANTS import QUEUE_FILE_TITLE
-from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
+from src.GUI.Util.Timestamp import Timestamp
 
 
 class ResultsManager:
@@ -38,12 +37,12 @@ class ResultsManager:
         return list(self.experiment_result_dict.keys())
 
     def make_new_experiment_result(self, exeriment_config_location, queue_result):
-        now = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
+        now = Timestamp()
         if queue_result.time is not None:
             now = queue_result.time
         exp = Experiment(exeriment_config_location)
 
-        name = exp.get_name() + str(now)
+        name = exp.get_name() + now.for_filename()
         name = clean_name_for_file(name)
 
         if not os.path.exists(self.results_directory):

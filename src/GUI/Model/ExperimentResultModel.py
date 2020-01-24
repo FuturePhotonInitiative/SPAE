@@ -1,9 +1,9 @@
-import datetime
 import json
 import os
 from shutil import copyfile
 import matplotlib.pyplot as plt
-from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
+
+from src.GUI.Util.Timestamp import Timestamp
 
 
 class ExperimentResultsModel:
@@ -15,8 +15,6 @@ class ExperimentResultsModel:
                  experiment_results_directory,
                  experiment_config_location=None,
                  experiments_results_files=None,
-                 start_datetime=datetime.datetime.today().strftime(TIMESTAMP_FORMAT),
-                 end_datetime=datetime.datetime.today().strftime(TIMESTAMP_FORMAT),
                  experiment_result_config=None):
         self.experiment_results_directory = experiment_results_directory
         if experiment_result_config is None:
@@ -24,8 +22,8 @@ class ExperimentResultsModel:
                 self.experiment_config_location = json.load(open(experiment_config_location, "r"))
             if experiments_results_files is None:
                 experiments_results_files = []
-            self.start_datetime = start_datetime
-            self.end_datetime = end_datetime
+            self.start_datetime = Timestamp()
+            self.end_datetime = Timestamp()
             self.experiments_results_files = experiments_results_files
         else:
             self.load_from_json(experiment_result_config)
@@ -58,8 +56,8 @@ class ExperimentResultsModel:
         config_dict = json.load(open(filename))
         self.experiment_results_directory = config_dict["experiment_results_directory"]
         self.experiment_config_location = config_dict["experiment_config_location"]
-        self.start_datetime = datetime.datetime.strptime(config_dict["start_datetime"], TIMESTAMP_FORMAT)
-        self.end_datetime = datetime.datetime.strptime(config_dict["end_datetime"], TIMESTAMP_FORMAT)
+        self.start_datetime = Timestamp.from_str(config_dict["start_datetime"])
+        self.end_datetime = Timestamp.from_str(config_dict["end_datetime"])
         self.experiments_results_files = config_dict["experiments_results_files"]
 
     def export_to_json(self, filename, pretty_print=True):
@@ -75,8 +73,8 @@ class ExperimentResultsModel:
         config_dict = {}
         config_dict["experiment_results_directory"] = self.experiment_results_directory
         config_dict["experiment_config_location"] = self.experiment_config_location
-        config_dict["start_datetime"] = self.start_datetime
-        config_dict["end_datetime"] = self.end_datetime
+        config_dict["start_datetime"] = str(self.start_datetime)
+        config_dict["end_datetime"] = str(self.end_datetime)
         config_dict["experiments_results_files"] = self.experiments_results_files
 
         with open(filename, 'w') as config_file:
@@ -250,16 +248,16 @@ class ExperimentResultsModel:
         self.experiments_results_files.append(out_file_name)
 
     def start_experiment(self):
-        self.start_datetime = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
+        self.start_datetime = Timestamp()
 
     def end_experiment(self):
-        self.end_datetime = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
+        self.end_datetime = Timestamp()
 
-    def set_start(self, start_datetime):
+    def set_start(self, start_datetime: Timestamp):
         self.start_datetime = start_datetime
 
     def set_end(self, end_datetime):
-        self.end_datetime = end_datetime
+        self.end_datetime = Timestamp.from_str(end_datetime)
 
     def get_experiment_results_file_list(self):
         return self.experiments_results_files
