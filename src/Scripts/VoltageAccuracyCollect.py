@@ -14,7 +14,7 @@ def main(data_map, experiment_result):
     start_voltage = float(data_map['Data']['Initial']["Start_Voltage"])
     final_voltage = float(data_map['Data']['Initial']["Final_Voltage"])
     step_voltage = float(data_map['Data']['Initial']["Step_Voltage"])
-    channel = int(data_map['Data']['Initial']["Channel"])
+    oscilloscope_channel = int(data_map['Data']['Initial']["Oscilloscope_Channel"])
 
     voltage_source.set_voltage(0)
     voltage_source.set_output_switch(1)
@@ -26,7 +26,7 @@ def main(data_map, experiment_result):
         print("Applying " + str(voltage) + " volts")
         voltage_source.set_voltage(voltage)
         osc.autoscale()
-        data_map['Data']['Collect'][str(voltage)] = osc.measure_vaverage(channel)
+        data_map['Data']['Collect'][str(voltage)] = osc.measure_vaverage(oscilloscope_channel)
         voltage += step_voltage
 
     end_time = time.time()
