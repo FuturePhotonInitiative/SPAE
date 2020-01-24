@@ -103,8 +103,9 @@ def parse_lines(lines, output_file, functions):
             ret = ret.replace("get timer", "(time.time() - start_time)")
             if ret.strip("\t").startswith("print "):
                 # Convert variables in a print statement to strings so the user doesn't have to know how to do this
-                i = ret.find("print ")+6
-                res = ret[:i]
+                i = ret.find("print ")
+                res = ret[:i] + "print("
+                i += 6
                 in_q = False
                 in_p = False
                 while i < len(ret):
@@ -122,6 +123,7 @@ def parse_lines(lines, output_file, functions):
                     i += 1
                 if in_p:
                     res += ")"
+                res += ")"  # end the print statement
                 ret = res
             if ret.strip("\t").startswith("store "):
                 # Store data in the results
